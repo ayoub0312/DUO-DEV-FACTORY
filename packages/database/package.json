@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@duo/contracts": "*",
-    "@libsql/client": "0.6.2",
+    "@libsql/client": "0.14.0",
     "drizzle-orm": "0.30.10"
   },
   "devDependencies": {

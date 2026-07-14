@@ -1,6 +1,8 @@
 import 'server-only';
+import { cookies } from 'next/headers';
 import { usersRepo } from '@duo/database';
-import { env, assertAuthConfig, isProd } from './env';
+import { env, authRequired, assertAuthConfig } from './env';
+import { SESSION_COOKIE, verifySession } from './session';
 
 export interface OwnerUser {
   id: string;
@@ -16,19 +18,27 @@ export class AuthError extends Error {
 }
 
 /**
- * Retourne le propriétaire courant (V1 mono-utilisateur).
+ * Retourne le propriétaire courant.
  *
- * - En développement (AUTH_DEV_MODE=true, local) : propriétaire simulé auto-provisionné.
- * - En production : le mode simulé est refusé (voir assertAuthConfig). Le branchement
- *   d'un fournisseur d'authentification mature est prévu (voir REAL-WORKFLOW-INTEGRATION-TODO).
+ * - Auth requise (production, ou hash de mot de passe configuré) : le propriétaire est
+ *   déterminé par la session signée (cookie httpOnly). Absence/invalidité → AuthError.
+ * - Développement local sans hash de mot de passe : propriétaire simulé auto-provisionné,
+ *   pour ne pas bloquer le travail (jamais actif en production, cf. assertAuthConfig).
  */
 export async function getOwner(): Promise<OwnerUser> {
   assertAuthConfig();
-  if (!env.authDevMode && isProd) {
-    // Aucun fournisseur réel branché en V1 : refuser explicitement plutôt que d'ouvrir un accès.
-    throw new AuthError('Authentification propriétaire non configurée en production.');
+
+  if (!authRequired) {
+    const owner = await usersRepo.ensureOwner(env.ownerEmail, 'Propriétaire');
+    return { id: owner.id, email: owner.email, name: owner.name };
   }
-  const owner = await usersRepo.ensureOwner(env.ownerEmail, 'Propriétaire');
+
+  const token = cookies().get(SESSION_COOKIE)?.value;
+  const ownerId = await verifySession(token);
+  if (!ownerId) throw new AuthError('Session absente ou expirée.');
+
+  const owner = await usersRepo.get(ownerId);
+  if (!owner) throw new AuthError('Propriétaire introuvable.');
   return { id: owner.id, email: owner.email, name: owner.name };
 }
 

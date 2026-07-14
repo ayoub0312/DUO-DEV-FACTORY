@@ -3,6 +3,7 @@ import { AppShell } from '../../components/app-shell';
 import { StatusDot } from '../../components/status-dot';
 import { getReportSummary } from '../../server/services/reports';
 import { listProjectsWithState } from '../../server/services/projects';
+import { requirePageOwner } from '../../server/guard';
 import { stateLabel, stateTone } from '../../lib/workflow-ui';
 
 export const dynamic = 'force-dynamic';
@@ -28,6 +29,7 @@ function formatDuration(ms: number | null): string {
 }
 
 export default async function ReportsPage() {
+  await requirePageOwner('/reports');
   const [report, projects] = await Promise.all([getReportSummary(), listProjectsWithState()]);
   const recentProjects = projects.slice(0, 5).map((p) => ({ id: p.id, name: p.name }));
 

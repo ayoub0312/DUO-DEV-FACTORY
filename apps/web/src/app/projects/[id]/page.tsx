@@ -8,11 +8,13 @@ import { WorkflowPanel } from '../../../components/workflow-panel';
 import { WorkflowSidebar } from '../../../components/workflow-sidebar';
 import { FilesPanel } from '../../../components/files-panel';
 import { getProjectDetail } from '../../../server/services/detail';
+import { requirePageOwner } from '../../../server/guard';
 import { stateLabel, stateTone } from '../../../lib/workflow-ui';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ProjectDetailPage({ params }: { params: { id: string } }) {
+  await requirePageOwner(`/projects/${params.id}`);
   const detail = await getProjectDetail(params.id);
   if (!detail) notFound();
   const { project, messages, files, run, stages, events, workPackages } = detail;

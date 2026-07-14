@@ -2,11 +2,13 @@ import Link from 'next/link';
 import { AppShell } from '../../components/app-shell';
 import { StatusDot } from '../../components/status-dot';
 import { listProjectsWithState } from '../../server/services/projects';
+import { requirePageOwner } from '../../server/guard';
 import { stateLabel, stateTone } from '../../lib/workflow-ui';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ProjectsPage() {
+  await requirePageOwner('/projects');
   const projects = await listProjectsWithState();
   const recentProjects = projects.slice(0, 5).map((p) => ({ id: p.id, name: p.name }));
 

@@ -2,12 +2,14 @@ import Link from 'next/link';
 import { AppShell } from '../components/app-shell';
 import { StatusDot } from '../components/status-dot';
 import { listProjectsWithState } from '../server/services/projects';
+import { requirePageOwner } from '../server/guard';
 import { stateLabel, stateTone } from '../lib/workflow-ui';
 
 export const dynamic = 'force-dynamic';
 
 /** Accueil / tableau de bord (design-system §10.1). Données réelles issues du seed. */
 export default async function HomePage() {
+  await requirePageOwner('/');
   const projects = await listProjectsWithState();
 
   const counts = {
