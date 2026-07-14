@@ -9,7 +9,7 @@ export default function NotFound() {
         href="/"
         className="mt-4 rounded-md bg-accent-builder px-4 py-2 text-sm font-medium text-white transition-colors hover:opacity-90"
       >
-        Retour à l'accueil
+        Retour à l&apos;accueil
       </Link>
     </div>
   );
