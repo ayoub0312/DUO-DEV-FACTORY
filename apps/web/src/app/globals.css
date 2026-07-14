@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tokens exposés en variables CSS (canaux RGB pour l'alpha Tailwind).
+   Source : packages/config/design-tokens.js — voir docs/design-system.md. */
+:root {
+  --color-bg: 251 250 247;
+  --color-surface: 255 255 255;
+  --color-surface-2: 244 242 237;
+  --color-border: 230 226 217;
+  --color-text: 28 27 26;
+  --color-text-muted: 107 104 98;
+  --color-accent-builder: 224 113 58;
+  --color-accent-reviewer: 43 92 230;
+  --color-success: 46 158 107;
+  --color-warning: 217 130 43;
+  --color-danger: 209 67 67;
+}
+
+.dark {
+  --color-bg: 14 17 22;
+  --color-surface: 23 27 34;
+  --color-surface-2: 30 35 44;
+  --color-border: 42 48 58;
+  --color-text: 236 234 228;
+  --color-text-muted: 155 161 172;
+  --color-accent-builder: 240 138 87;
+  --color-accent-reviewer: 91 132 240;
+  --color-success: 67 181 131;
+  --color-warning: 224 151 91;
+  --color-danger: 224 101 101;
+}
+
+html,
+body {
+  background-color: rgb(var(--color-bg));
+  color: rgb(var(--color-text));
+}
+
+body {
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

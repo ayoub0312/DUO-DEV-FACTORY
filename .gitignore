@@ -1,0 +1,46 @@
+# ancien scaffold dupliqué (première tentative, non utilisé par l'app actuelle)
+_duo_bundle/
+_duo_bundle.zip
+_to_delete/
+
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# builds
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# env — NE JAMAIS committer de secrets
+.env
+.env.local
+.env.*.local
+
+# data / stockage local de dev
+*.db
+*.db-*
+*.sqlite
+.data/
+storage/
+uploads/
+
+# tests
+coverage/
+playwright-report/
+test-results/
+.vitest/
+
+# logs
+*.log
+npm-debug.log*
+
+# OS / éditeurs
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

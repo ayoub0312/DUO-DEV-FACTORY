@@ -1,0 +1,31 @@
+{
+  "name": "duo-dev-factory-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DUO DEV FACTORY WEB — centre de commande de développement assisté par IA (V1 avec Mock Workflow Adapter).",
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @duo/web",
+    "build": "npm run build --workspace @duo/web",
+    "start": "npm run start --workspace @duo/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:e2e": "npm run test:e2e --workspace @duo/web --if-present",
+    "db:generate": "npm run db:generate --workspace @duo/database",
+    "db:migrate": "npm run db:migrate --workspace @duo/database",
+    "db:seed": "npm run db:seed --workspace @duo/database",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "ci": "npm run typecheck && npm run lint && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "prettier": "3.3.3",
+    "typescript": "5.4.5"
+  }
+}

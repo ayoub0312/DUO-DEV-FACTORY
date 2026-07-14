@@ -1,0 +1,15 @@
+import type { Config } from 'tailwindcss';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const preset = require('@duo/config/tailwind-preset');
+
+const config: Config = {
+  presets: [preset],
+  content: [
+    './src/**/*.{ts,tsx}',
+    '../../packages/ui/src/**/*.{ts,tsx}',
+  ],
+  theme: { extend: {} },
+  plugins: [],
+};
+
+export default config;

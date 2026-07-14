@@ -1,0 +1,21 @@
+{
+  "name": "@duo/config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./eslint-preset": "./eslint-preset.cjs",
+    "./tailwind-preset": "./tailwind-preset.cjs",
+    "./design-tokens": "./design-tokens.js"
+  },
+  "files": [
+    "index.js",
+    "tsconfig.base.json",
+    "eslint-preset.cjs",
+    "tailwind-preset.cjs",
+    "design-tokens.js"
+  ]
+}
