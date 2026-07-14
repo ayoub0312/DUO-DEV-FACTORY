@@ -20,13 +20,11 @@ build/
 .env.local
 .env.*.local
 
-# data / stockage local de dev
+# data / stockage local de dev (le stockage runtime réel vit sous .data/storage)
 *.db
 *.db-*
 *.sqlite
 .data/
-storage/
-uploads/
 
 # tests
 coverage/
