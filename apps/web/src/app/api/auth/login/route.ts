@@ -36,25 +36,16 @@ export function POST(req: Request) {
       return fail('UNAUTHORIZED', 'Identifiants invalides.', 401, reqId);
     }
 
-    let step = 'ensureOwner';
-    try {
-      const owner = await usersRepo.ensureOwner(env.ownerEmail, 'Propriétaire');
-      step = 'signSession';
-      const token = signSession(owner.id);
-      step = 'cookies.set';
-      cookies().set(SESSION_COOKIE, token, {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: 'lax',
-        path: '/',
-        maxAge: SESSION_MAX_AGE_S,
-      });
-      return ok({ owner: { id: owner.id, email: owner.email, name: owner.name } });
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(`[login ${reqId}] échec à l'étape ${step}:`, err);
-      const msg = err instanceof Error ? err.message : String(err);
-      return fail('INTERNAL', `Étape ${step} : ${msg}`.slice(0, 300), 500, reqId);
-    }
+    const owner = await usersRepo.ensureOwner(env.ownerEmail, 'Propriétaire');
+    const token = signSession(owner.id);
+    cookies().set(SESSION_COOKIE, token, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: SESSION_MAX_AGE_S,
+    });
+
+    return ok({ owner: { id: owner.id, email: owner.email, name: owner.name } });
   }, 'write');
 }
