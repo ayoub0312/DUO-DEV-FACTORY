@@ -53,7 +53,8 @@ export function POST(req: Request) {
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(`[login ${reqId}] échec à l'étape ${step}:`, err);
-      return fail('INTERNAL', `Erreur interne à l'étape ${step}.`, 500, reqId);
+      const msg = err instanceof Error ? err.message : String(err);
+      return fail('INTERNAL', `Étape ${step} : ${msg}`.slice(0, 300), 500, reqId);
     }
   }, 'write');
 }
