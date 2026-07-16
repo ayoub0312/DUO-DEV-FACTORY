@@ -1,5 +1,6 @@
 import 'server-only';
-import { workflowRepo, projectsRepo } from '@duo/database';
+import { workflowRepo, projectsRepo, usersRepo } from '@duo/database';
+import { env } from '../env';
 import {
   zStartWorkflow,
   zEventQuery,
@@ -29,6 +30,19 @@ async function ensureProjectOwned(projectId: string) {
   const project = await projectsRepo.get(owner.id, projectId);
   if (!project) throw new AuthError('Projet introuvable ou non autorisé.');
   return { owner, project };
+}
+
+/**
+ * Vérifie qu'un projet existe pour le propriétaire mono-utilisateur, SANS passer par la
+ * session par cookie — utilisé par le pont Worker externe, déjà authentifié par jeton
+ * partagé au niveau de la route (le script bash n'a pas de cookie de navigateur).
+ */
+async function ensureProjectExistsForBridge(projectId: string) {
+  const owner = await usersRepo.getByEmail(env.ownerEmail);
+  if (!owner) throw new AuthError('Propriétaire non initialisé.');
+  const project = await projectsRepo.get(owner.id, projectId);
+  if (!project) throw new AuthError('Projet introuvable.');
+  return project;
 }
 
 /** Vérifie qu'un run appartient (via son projet) au propriétaire courant. */
@@ -269,8 +283,9 @@ async function applyExternalTransition(run: RunRow, parsed: ExternalWorkflowEven
 export async function ingestExternalEvent(projectId: string, input: unknown) {
   // Authentification déjà vérifiée au niveau route (jeton de pont) ; on vérifie ici que le
   // projet existe bel et bien pour le propriétaire mono-utilisateur, pour éviter de créer
-  // des runs orphelins sur un identifiant invalide.
-  await ensureProjectOwned(projectId);
+  // des runs orphelins sur un identifiant invalide. Pas de session par cookie ici : le
+  // script bash externe s'authentifie par jeton, pas par navigateur.
+  await ensureProjectExistsForBridge(projectId);
   const parsed = zExternalWorkflowEvent.parse(input);
 
   let run: RunRow | null = await workflowRepo.latestRunForProject(projectId);
