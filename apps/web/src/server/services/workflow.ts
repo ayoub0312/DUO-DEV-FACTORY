@@ -289,7 +289,11 @@ export async function ingestExternalEvent(projectId: string, input: unknown) {
   const parsed = zExternalWorkflowEvent.parse(input);
 
   let run: RunRow | null = await workflowRepo.latestRunForProject(projectId);
-  if (!run || TERMINAL_STATES.has(run.state as WorkflowState)) {
+  // BLOCKED est une limite interne de la machine à états (DEFAULT_MAX_CYCLES, distincte
+  // du MAX_PLAN_CYCLES/MAX_CODE_CYCLES du script bash externe) : sans mécanisme de
+  // déblocage côté pont, on démarre un nouveau run pour continuer à refléter les
+  // tentatives suivantes plutôt que de rester bloqué indéfiniment côté affichage.
+  if (!run || TERMINAL_STATES.has(run.state as WorkflowState) || run.state === 'BLOCKED') {
     run = await workflowRepo.createRun(projectId);
     await workflowRepo.appendEvent({
       runId: run.id,
